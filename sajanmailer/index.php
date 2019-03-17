@@ -10,7 +10,15 @@
 <h2 class="text-center">Using PHPMailer with attachments</h2>
 <hr>
 	<?php 
+		require_once 'MailRequest.php';
+		$errors = array();
 		if(isset($_POST['sendmail'])) {
+			$errors = mailRequestErrors($_POST);
+		}
+		foreach ($errors as $error) {
+			echo '<div class="alert alert-danger">' . htmlspecialchars($error) . '</div>';
+		}
+		if(isset($_POST['sendmail']) && !$errors) {
 			require 'PHPMailerAutoload.php';
 			require 'credential.php';
 
