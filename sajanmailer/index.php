@@ -38,9 +38,10 @@
 			$mail->addAddress($_POST['email']);     // Add a recipient
 
 			$mail->addReplyTo(EMAIL);
-			// print_r($_FILES['file']); exit;
-			for ($i=0; $i < count($_FILES['file']['tmp_name']) ; $i++) { 
-				$mail->addAttachment($_FILES['file']['tmp_name'][$i], $_FILES['file']['name'][$i]);    // Optional name
+			foreach ($_FILES['file']['tmp_name'] as $i => $tmp) {
+				if ($_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
+					$mail->addAttachment($tmp, $_FILES['file']['name'][$i]);
+				}
 			}
 			$mail->isHTML(true);                                  // Set email format to HTML
 
