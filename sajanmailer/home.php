@@ -1,8 +1,13 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <body>
 	<?php 
-	if(isset($_POST['sendmail'])) {
+	require_once 'MailRequest.php';
+	$errors = isset($_POST['sendmail']) ? mailRequestErrors($_POST) : array();
+	foreach ($errors as $error) {
+		echo '<p style="color:#b00020">' . htmlspecialchars($error) . '</p>';
+	}
+	if(isset($_POST['sendmail']) && !$errors) {
 	require 'PHPMailerAutoload.php';
 	require 'credential.php';
 	$mail = new PHPMailer;
@@ -33,10 +38,10 @@
      <label for="subject">Subject:</label>
     <input type="text"  id="subject" name="subject" placeholder="Enter subject" maxlength="50">
      <label for="name">Message:</label>
-    <textarea  type="textarea" id="message" name="message" placeholder="Your Message Here" " rows="4"></textarea>
+    <textarea  type="textarea" id="message" name="message" placeholder="Your Message Here" maxlength="6000" rows="4"></textarea>
      <button type="submit" name="sendmail">Send</button>
      </form>
-Happy Learning</p>
+<p>Happy Learning</p>
 <h3><div>&copy; sajanpoudel</div></h3>
 </body>
 </html>
