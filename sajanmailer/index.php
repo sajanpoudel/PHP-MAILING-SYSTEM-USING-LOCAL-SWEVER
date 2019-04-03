@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,9 +12,13 @@
 <hr>
 	<?php 
 		require_once 'MailRequest.php';
+		require_once 'Csrf.php';
 		$errors = array();
 		if(isset($_POST['sendmail'])) {
 			$errors = mailRequestErrors($_POST);
+			if (!csrfTokenIsValid($_SESSION, isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null)) {
+				$errors[] = 'The form has expired. Reload the page and try again.';
+			}
 		}
 		foreach ($errors as $error) {
 			echo '<div class="alert alert-danger">' . htmlspecialchars($error) . '</div>';
@@ -40,6 +45,7 @@
 	<div class="row">
     <div class="col-md-9 col-md-offset-2">
         <form role="form" method="post" enctype="multipart/form-data">
+        	<?php echo csrfField($_SESSION); ?>
         	<div class="row">
                 <div class="col-sm-9 form-group">
                     <label for="email">To Email:</label>
