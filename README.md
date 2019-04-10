@@ -11,6 +11,7 @@ The project is in `sajanmailer/`. The original `sajanmailer.zip` is kept for ref
 | `index.php` | Full form with multiple file attachments |
 | `home.php` | Simple form without attachments |
 | `Mailer.php` | `createMailer()` sets up PHPMailer for Gmail SMTP |
+| `Csrf.php` | Session token that both forms send and check |
 | `MailRequest.php` | Checks the recipient, subject and message before anything is sent |
 | `credential.example.php` | Template for `credential.php`, which defines `EMAIL` and `PASS` |
 | `PHPMailerAutoload.php` | Loads the PHPMailer classes |
