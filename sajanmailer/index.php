@@ -19,36 +19,15 @@
 			echo '<div class="alert alert-danger">' . htmlspecialchars($error) . '</div>';
 		}
 		if(isset($_POST['sendmail']) && !$errors) {
-			require 'PHPMailerAutoload.php';
-			require 'credential.php';
+			require_once 'Mailer.php';
 
-			$mail = new PHPMailer;
-
-			// $mail->SMTPDebug = 4;                               // Enable verbose debug output
-
-			$mail->isSMTP();                                      // Set mailer to use SMTP
-			$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-			$mail->SMTPAuth = true;                               // Enable SMTP authentication
-			$mail->Username = EMAIL;                 // SMTP username
-			$mail->Password = PASS;                           // SMTP password
-			$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-			$mail->Port = 587;                                    // TCP port to connect to
-
-			$mail->setFrom(EMAIL, 'Learn With Sajan');
-			$mail->addAddress($_POST['email']);     // Add a recipient
-
+			$mail = createMailer($_POST['email'], $_POST['subject'], $_POST['message']);
 			$mail->addReplyTo(EMAIL);
 			foreach ($_FILES['file']['tmp_name'] as $i => $tmp) {
 				if ($_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
 					$mail->addAttachment($tmp, $_FILES['file']['name'][$i]);
 				}
 			}
-			$mail->isHTML(true);                                  // Set email format to HTML
-
-			$mail->Subject = $_POST['subject'];
-			$mail->Body    = $_POST['message'];
-			//'<div style="border:2px solid red;">This is the HTML message body <b>in bold!</b></div>';
-			$mail->AltBody = $_POST['message'];
 
 			if(!$mail->send()) {
 			    echo 'Message could not be sent.';
