@@ -7,3 +7,4 @@ check('broken addresses are rejected', !isValidRecipient('') && !isValidRecipien
 check('header injection is rejected', !isValidRecipient("a@b.com\nBcc: x@y.com"));
 check('a short subject is valid', isValidSubject('Weekly notes'));
 check('an empty subject is invalid', !isValidSubject('') && !isValidSubject('   '));
+check('a subject with a line break is invalid', !isValidSubject("Hi\nBcc: x@y.com"));
