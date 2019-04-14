@@ -13,9 +13,13 @@
 	<?php 
 		require_once 'MailRequest.php';
 		require_once 'Csrf.php';
+		require_once 'Attachments.php';
 		$errors = array();
 		if(isset($_POST['sendmail'])) {
 			$errors = mailRequestErrors($_POST);
+			if (isset($_FILES['file'])) {
+				$errors = array_merge($errors, attachmentErrors($_FILES['file']));
+			}
 			if (!csrfTokenIsValid($_SESSION, isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null)) {
 				$errors[] = 'The form has expired. Reload the page and try again.';
 			}
