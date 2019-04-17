@@ -12,3 +12,4 @@ check('a very long subject is invalid', !isValidSubject(str_repeat('a', 151)) &&
 check('a message must not be empty', !isValidMessage('') && isValidMessage('Hello'));
 check('the message limit is 6000 characters', isValidMessage(str_repeat('a', 6000)) && !isValidMessage(str_repeat('a', 6001)));
 check('a good form has no errors', mailRequestErrors(['email' => 'a@b.com', 'subject' => 'Hi', 'message' => 'Hello']) === []);
+check('an empty form has three errors', count(mailRequestErrors([])) === 3);
