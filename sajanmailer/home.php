@@ -8,22 +8,8 @@
 		echo '<p style="color:#b00020">' . htmlspecialchars($error) . '</p>';
 	}
 	if(isset($_POST['sendmail']) && !$errors) {
-	require 'PHPMailerAutoload.php';
-	require 'credential.php';
-	$mail = new PHPMailer;
-	// $mail->SMTPDebug = 4;                            
-	$mail->isSMTP();                                      
-	$mail->Host = 'smtp.gmail.com';  
-	$mail->SMTPAuth = true;                               
-	$mail->Username = EMAIL;                
-	$mail->Password = PASS;                           
-	$mail->SMTPSecure = 'tls';                            
-	$mail->Port = 587;                                    
-	$mail->setFrom(EMAIL, 'Learn With Sajan');
-	$mail->addAddress($_POST['email']);     
-	$mail->isHTML(true);                               
-	$mail->Subject = $_POST['subject'];
-	$mail->Body    = $_POST['message'];
+	require_once 'Mailer.php';
+	$mail = createMailer($_POST['email'], $_POST['subject'], $_POST['message']);
 		if(!$mail->send()) {
 	    echo 'Message could not be sent.';
 	    echo 'Mailer Error: ' . $mail->ErrorInfo;
