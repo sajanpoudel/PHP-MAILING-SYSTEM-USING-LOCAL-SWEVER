@@ -1,4 +1,31 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require_once 'MailController.php';
+require_once 'Flash.php';
+require_once 'Csrf.php';
+
+// Builds the mail with PHPMailer and sends it. Returns array(true) or array(false, reason).
+function sendFullMail($post, $files)
+{
+	require_once 'Mailer.php';
+	$mail = createMailer($post['email'], $post['subject'], $post['message']);
+	$mail->addReplyTo(EMAIL);
+	foreach ($files['file']['tmp_name'] as $i => $tmp) {
+		if ($files['file']['error'][$i] === UPLOAD_ERR_OK) {
+			$mail->addAttachment($tmp, $files['file']['name'][$i]);
+		}
+	}
+	return $mail->send() ? array(true) : array(false, $mail->ErrorInfo);
+}
+
+$result = processMailForm($_POST, $_FILES, $_SESSION, 'sendFullMail');
+if ($result['sent']) {
+	setFlash($_SESSION, 'Message has been sent');
+	header('Location: index.php');
+	exit;
+}
+$notice = takeFlash($_SESSION);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,42 +37,14 @@
 <h1 class="text-center">Sending Emails in PHP from localhost with SMTP</h1>
 <h2 class="text-center">Using PHPMailer with attachments</h2>
 <hr>
-	<?php 
-		require_once 'MailRequest.php';
-		require_once 'Csrf.php';
-		require_once 'Attachments.php';
-		$errors = array();
-		if(isset($_POST['sendmail'])) {
-			$errors = mailRequestErrors($_POST);
-			if (isset($_FILES['file'])) {
-				$errors = array_merge($errors, attachmentErrors($_FILES['file']));
-			}
-			if (!csrfTokenIsValid($_SESSION, isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null)) {
-				$errors[] = 'The form has expired. Reload the page and try again.';
-			}
+	<?php
+		if ($notice !== null) {
+			echo '<div class="alert alert-success">' . htmlspecialchars($notice) . '</div>';
 		}
-		foreach ($errors as $error) {
+		foreach ($result['errors'] as $error) {
 			echo '<div class="alert alert-danger">' . htmlspecialchars($error) . '</div>';
 		}
-		if(isset($_POST['sendmail']) && !$errors) {
-			require_once 'Mailer.php';
-
-			$mail = createMailer($_POST['email'], $_POST['subject'], $_POST['message']);
-			$mail->addReplyTo(EMAIL);
-			foreach ($_FILES['file']['tmp_name'] as $i => $tmp) {
-				if ($_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
-					$mail->addAttachment($tmp, $_FILES['file']['name'][$i]);
-				}
-			}
-
-			if(!$mail->send()) {
-			    echo 'Message could not be sent.';
-			    echo 'Mailer Error: ' . $mail->ErrorInfo;
-			} else {
-			    echo 'Message has been sent';
-			}
-		}
-	 ?>
+	?>
 	<div class="row">
     <div class="col-md-9 col-md-offset-2">
         <form role="form" method="post" enctype="multipart/form-data">
