@@ -1,28 +1,36 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require_once 'MailController.php';
+require_once 'Flash.php';
+require_once 'Csrf.php';
+
+// Builds the mail with PHPMailer and sends it. Returns array(true) or array(false, reason).
+function sendSimpleMail($post, $files)
+{
+	require_once 'Mailer.php';
+	$mail = createMailer($post['email'], $post['subject'], $post['message']);
+	return $mail->send() ? array(true) : array(false, $mail->ErrorInfo);
+}
+
+$result = processMailForm($_POST, $_FILES, $_SESSION, 'sendSimpleMail');
+if ($result['sent']) {
+	setFlash($_SESSION, 'Message has been sent');
+	header('Location: home.php');
+	exit;
+}
+$notice = takeFlash($_SESSION);
+?>
 <!DOCTYPE html>
 <html>
 <body>
-	<?php 
-	require_once 'MailRequest.php';
-	require_once 'Csrf.php';
-	$errors = isset($_POST['sendmail']) ? mailRequestErrors($_POST) : array();
-	if (isset($_POST['sendmail']) && !csrfTokenIsValid($_SESSION, isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null)) {
-		$errors[] = 'The form has expired. Reload the page and try again.';
+	<?php
+	if ($notice !== null) {
+		echo '<p style="color:#2e7d32">' . htmlspecialchars($notice) . '</p>';
 	}
-	foreach ($errors as $error) {
+	foreach ($result['errors'] as $error) {
 		echo '<p style="color:#b00020">' . htmlspecialchars($error) . '</p>';
 	}
-	if(isset($_POST['sendmail']) && !$errors) {
-	require_once 'Mailer.php';
-	$mail = createMailer($_POST['email'], $_POST['subject'], $_POST['message']);
-		if(!$mail->send()) {
-	    echo 'Message could not be sent.';
-	    echo 'Mailer Error: ' . $mail->ErrorInfo;
-		} else {
-	      echo 'Message has been sent';
-		}
-		}
-	 ?>
+	?>
     <form role="form" method="post" enctype="multipart/form-data">
     <?php echo csrfField($_SESSION); ?>
      <label for="email">To Email:</label>
