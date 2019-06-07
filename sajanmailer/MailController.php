@@ -4,16 +4,19 @@
 require_once __DIR__ . '/MailRequest.php';
 require_once __DIR__ . '/Csrf.php';
 require_once __DIR__ . '/Attachments.php';
+require_once __DIR__ . '/RateLimit.php';
 
 /**
  * Handles one submitted form.
  *
  * $sender is called as $sender($post, $files) once the form is valid and must return
  * array(true) or array(false, 'reason'). The result has the keys 'errors' (list of
- * messages), 'sent' (bool) and 'submitted' (bool).
+ * messages), 'sent' (bool) and 'submitted' (bool). $now is the current time and only
+ * needs to be given in tests.
  */
-function processMailForm(array $post, array $files, array $session, callable $sender)
+function processMailForm(array $post, array $files, array $session, callable $sender, $now = null)
 {
+	$now = $now === null ? time() : $now;
 	$result = array('errors' => array(), 'sent' => false, 'submitted' => isset($post['sendmail']));
 	if (!$result['submitted']) {
 		return $result;
@@ -25,6 +28,10 @@ function processMailForm(array $post, array $files, array $session, callable $se
 	}
 	if (!csrfTokenIsValid($session, isset($post['csrf_token']) ? $post['csrf_token'] : null)) {
 		$errors[] = 'The form has expired. Reload the page and try again.';
+	}
+	$wait = secondsToWait($session, $now);
+	if ($wait > 0) {
+		$errors[] = "Please wait $wait seconds before sending another mail.";
 	}
 	if ($errors) {
 		$result['errors'] = $errors;

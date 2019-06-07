@@ -3,6 +3,7 @@ session_start();
 require_once 'MailController.php';
 require_once 'Flash.php';
 require_once 'Csrf.php';
+require_once 'RateLimit.php';
 
 // Builds the mail with PHPMailer and sends it. Returns array(true) or array(false, reason).
 function sendSimpleMail($post, $files)
@@ -14,6 +15,7 @@ function sendSimpleMail($post, $files)
 
 $result = processMailForm($_POST, $_FILES, $_SESSION, 'sendSimpleMail');
 if ($result['sent']) {
+	noteMailSent($_SESSION, time());
 	setFlash($_SESSION, 'Message has been sent');
 	header('Location: home.php');
 	exit;
