@@ -13,7 +13,7 @@ function sendSimpleMail($post, $files)
 	return $mail->send() ? array(true) : array(false, $mail->ErrorInfo);
 }
 
-$result = processMailForm($_POST, $_FILES, $_SESSION, 'sendSimpleMail');
+$result = processMailForm($_POST, $_FILES, $_SESSION, 'sendSimpleMail', null, __DIR__ . '/sent.log');
 if ($result['sent']) {
 	noteMailSent($_SESSION, time());
 	setFlash($_SESSION, 'Message has been sent');

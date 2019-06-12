@@ -5,6 +5,7 @@ require_once __DIR__ . '/MailRequest.php';
 require_once __DIR__ . '/Csrf.php';
 require_once __DIR__ . '/Attachments.php';
 require_once __DIR__ . '/RateLimit.php';
+require_once __DIR__ . '/MailLog.php';
 
 /**
  * Handles one submitted form.
@@ -12,9 +13,9 @@ require_once __DIR__ . '/RateLimit.php';
  * $sender is called as $sender($post, $files) once the form is valid and must return
  * array(true) or array(false, 'reason'). The result has the keys 'errors' (list of
  * messages), 'sent' (bool) and 'submitted' (bool). $now is the current time and only
- * needs to be given in tests.
+ * needs to be given in tests. When $logPath is given every attempt is written to that file.
  */
-function processMailForm(array $post, array $files, array $session, callable $sender, $now = null)
+function processMailForm(array $post, array $files, array $session, callable $sender, $now = null, $logPath = null)
 {
 	$now = $now === null ? time() : $now;
 	$result = array('errors' => array(), 'sent' => false, 'submitted' => isset($post['sendmail']));
@@ -39,6 +40,9 @@ function processMailForm(array $post, array $files, array $session, callable $se
 	}
 
 	$outcome = $sender($post, $files);
+	if ($logPath !== null) {
+		writeMailLog($logPath, $now, (bool) $outcome[0], $post['email'], $post['subject']);
+	}
 	if ($outcome[0]) {
 		$result['sent'] = true;
 	} else {

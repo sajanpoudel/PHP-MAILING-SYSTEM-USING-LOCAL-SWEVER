@@ -30,3 +30,10 @@ $r = processMailForm($good, array(), $busy, $ok, 1005);
 check('a second mail within the pause is refused', !$r['sent'] && strpos($r['errors'][0], 'wait 15 seconds') !== false);
 $r = processMailForm($good, array(), $busy, $ok, 1100);
 check('a mail after the pause is sent', $r['sent']);
+
+$logFile = tempnam(sys_get_temp_dir(), 'maillog');
+processMailForm($good, array(), $session, $ok, 5000, $logFile);
+processMailForm($good, array(), $session, $fails, 5000, $logFile);
+$lines = file($logFile);
+check('every attempt is logged', count($lines) === 2 && strpos($lines[0], "\tsent\t") !== false && strpos($lines[1], "\tfailed\t") !== false);
+unlink($logFile);
