@@ -3,6 +3,7 @@
 
 require_once __DIR__ . '/PHPMailerAutoload.php';
 require_once __DIR__ . '/credential.php';
+require_once __DIR__ . '/HtmlBody.php';
 
 function createMailer($recipient, $subject, $htmlBody)
 {
@@ -19,7 +20,7 @@ function createMailer($recipient, $subject, $htmlBody)
 	$mail->addAddress(trim($recipient));
 	$mail->isHTML(true);
 	$mail->Subject = trim($subject);
-	$mail->Body = $htmlBody;
-	$mail->AltBody = strip_tags($htmlBody);
+	$mail->Body = cleanHtmlBody($htmlBody);
+	$mail->AltBody = plainTextBody($mail->Body);
 	return $mail;
 }
