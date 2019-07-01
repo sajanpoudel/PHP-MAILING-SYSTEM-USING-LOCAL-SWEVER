@@ -4,19 +4,21 @@
 require_once __DIR__ . '/PHPMailerAutoload.php';
 require_once __DIR__ . '/credential.php';
 require_once __DIR__ . '/HtmlBody.php';
+require_once __DIR__ . '/config.php';
 
 function createMailer($recipient, $subject, $htmlBody)
 {
+	$config = mailerConfig();
 	$mail = new PHPMailer;
 	$mail->isSMTP();
-	$mail->Host = 'smtp.gmail.com';
+	$mail->Host = $config['host'];
 	$mail->SMTPAuth = true;
 	$mail->Username = EMAIL;
 	$mail->Password = PASS;
-	$mail->SMTPSecure = 'tls';
-	$mail->Port = 587;
+	$mail->SMTPSecure = $config['secure'];
+	$mail->Port = $config['port'];
 
-	$mail->setFrom(EMAIL, 'Learn With Sajan');
+	$mail->setFrom(EMAIL, $config['from_name']);
 	$mail->addAddress(trim($recipient));
 	$mail->isHTML(true);
 	$mail->Subject = trim($subject);
