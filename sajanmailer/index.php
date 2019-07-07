@@ -88,5 +88,6 @@ $notice = takeFlash($_SESSION);
 <p>
 Happy Learning</p>
 <h3><div>&copy; sajanpoudel</div></h3>
+<script src="js/counter.js"></script>
 </body>
 </html>
