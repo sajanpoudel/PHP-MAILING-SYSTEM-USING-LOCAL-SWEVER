@@ -49,7 +49,7 @@ $notice = takeFlash($_SESSION);
 	?>
 	<div class="row">
     <div class="col-md-9 col-md-offset-2">
-        <form role="form" method="post" enctype="multipart/form-data">
+        <form role="form" method="post" enctype="multipart/form-data" id="mail-form">
         	<?php echo csrfField($_SESSION); ?>
         	<div class="row">
                 <div class="col-sm-9 form-group">
@@ -67,13 +67,13 @@ $notice = takeFlash($_SESSION);
             
             <div class="row">
                 <div class="col-sm-9 form-group">
-                    <label for="name">Message:</label>
+                    <label for="message">Message:</label>
                     <textarea class="form-control" type="textarea" id="message" name="message" placeholder="Your Message Here" maxlength="6000" rows="4"></textarea>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-9 form-group">
-                    <label for="name">File:</label>
+                    <label for="file">Files:</label>
                     <input name="file[]" multiple="multiple" class="form-control" type="file" id="file">
                 </div>
             </div>

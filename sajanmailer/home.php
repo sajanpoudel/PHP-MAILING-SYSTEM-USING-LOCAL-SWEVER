@@ -39,7 +39,7 @@ $notice = takeFlash($_SESSION);
     <input type="email" id="email" name="email" placeholder="Enter your email" maxlength="50">
      <label for="subject">Subject:</label>
     <input type="text"  id="subject" name="subject" placeholder="Enter subject" maxlength="50">
-     <label for="name">Message:</label>
+     <label for="message">Message:</label>
     <textarea  type="textarea" id="message" name="message" placeholder="Your Message Here" maxlength="6000" rows="4"></textarea>
      <button type="submit" name="sendmail">Send</button>
      </form>
