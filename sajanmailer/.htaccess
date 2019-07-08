@@ -1,0 +1,4 @@
+# Never serve the credentials, the log or the helper code directly.
+<FilesMatch "^(credential\.php|credential\.example\.php|sent\.log|config\.php|Csrf\.php|Flash\.php|MailLog\.php|RateLimit\.php|HtmlBody\.php|Attachments\.php|MailRequest\.php|MailController\.php|Mailer\.php)$">
+	Require all denied
+</FilesMatch>
