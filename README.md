@@ -24,3 +24,9 @@ A small PHP mailer that sends email from a local server through Gmail SMTP with 
 ## Keep your credentials private
 
 Never commit a real password in `credential.php`. Use a throwaway app password while testing and revoke it when you are done.
+
+## Troubleshooting
+
+- **Could not authenticate**: check that the app password is correct and that 2 Step Verification is on.
+- **Could not connect to SMTP host**: the server must be able to reach `smtp.gmail.com` on port 587.
+- **Autoloader cannot find the classes**: `PHPMailerAutoload.php` builds the path with a backslash, so on Linux or macOS replace `'phpmailer\class.'` with `'phpmailer/class.'`.
